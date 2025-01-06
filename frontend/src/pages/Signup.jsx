@@ -2,20 +2,22 @@ import React from "react";
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import useUserStore from '../store/userStore'
 // import jwtDecode from "jwt-decode";
 
 const Signup = () => {
+    const { setUser } = useUserStore();
 
     const navigate = useNavigate();
-    
+
     const login = useGoogleLogin({
         onSuccess: async (response) => {
             console.log("Google login successful", response);
 
             // Ensure response.credential exists (for implicit flow)
 
-            try{
-                const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo",{
+            try {
+                const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
                     headers: {
                         Authorization: `Bearer ${response.access_token}`
                     }
@@ -24,25 +26,27 @@ const Signup = () => {
                 console.log("User Credentials: ", res.data);
 
 
-                const loginResponse = await axios.post('http://localhost:3000/signup', { 
+                const loginResponse = await axios.post('http://localhost:3000/signup', {
                     image: userCredentials.picture,
                     name: userCredentials.name,
                     email: userCredentials.email
                 })
 
-                if(loginResponse.data.message === "User already exist with this email"){
+                if (loginResponse.data.message === "User already exist with this email") {
+                    setUser(res.data);
                     navigate('/unlockPage');
-                }else{
-                    navigate('/createWallet')
+                } else {
+                    setUser(res.data);
+                    navigate('/createPassword')
                 }
 
-            }catch(error){
+            } catch (error) {
                 console.log("There was an error while getting data: ", error);
             }
-            
+
         },
-        
-         // Change flow to 'implicit' for client-side apps
+
+        // Change flow to 'implicit' for client-side apps
     });
 
     return (

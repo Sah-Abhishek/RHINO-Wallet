@@ -66,6 +66,39 @@ app.post('/signup', async(req, res) => {
     }
 })
 
+app.post('/saveCredential', async(req, res) => {
+    const { email, password } = req.body;
+    
+    if(!password) {
+        return res.status(400).json({
+            message: "Password missing"
+        })
+    }
+    try{
+        const existingUser = await User.findOne({email: email});
+        if(!existingUser){
+            return res.status(404).json({
+                message: "User does not exist"
+            })
+        }
+        console.log("This is the existing User", existingUser);
+
+        existingUser.password = password;
+        
+
+        await existingUser.save();
+        res.status(201).json({
+            message: "Password Saved Successfully"
+        })
+
+    }catch(error){
+        console.log("Internal Server Error", error);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+} )
+
 app.post('/checkCredential', async(req, res) => {
     const { inputValue } = req.body;
     // try{

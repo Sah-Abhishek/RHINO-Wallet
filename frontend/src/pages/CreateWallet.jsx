@@ -1,17 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { generateMnemonic, mnemonicToSeedSync } from "bip39";
+import useUserStore from "../store/userStore";
+import { Buffer } from 'buffer';
+
+
 
 const CreateWallet = () => {
     const navigate = useNavigate();
     const [selectedNetwork, setSelectedNetwork] = useState("solana");
     const [showPopup, setShowPopup] = useState(false);
+    const { addMnemonic } = useUserStore();
 
     const handleCreateWallet = () => {
         // Logic for creating a wallet goes here
         console.log("Wallet created");
 
         // Navigate to the next page (e.g., dashboard or wallet details page)
-        navigate('/dashboard');
+        // navigate('/dashboard');
     };
 
     const handleNetworkClick = () => {
@@ -28,6 +34,27 @@ const CreateWallet = () => {
             return "etherium_logo.png";  // Ethereum logo
         }
         return "";
+    };
+
+    const generateWallet = () => {
+        // Generate the mnemonic phrase as a string
+        const words = generateMnemonic();
+        
+        // Split the mnemonic string into an array of words by space
+        const mnemonicWords = words.split(" ");
+        
+        // Log to verify the mnemonicWords is an array
+        console.log("Mnemonic words as array: ", mnemonicWords);
+        
+        // Check if mnemonicWords is indeed an array
+        if (Array.isArray(mnemonicWords)) {
+            // Here, you can store the mnemonic words in your store or any other state
+            addMnemonic(mnemonicWords); 
+            // alert("Wallet Added");
+            navigate('/mnemonic');
+        } else {
+            console.error("Mnemonic words were not split into an array correctly.");
+        }
     };
 
     return (
@@ -87,14 +114,14 @@ const CreateWallet = () => {
                 {/* Create Wallet Button */}
                 <div className="flex flex-col gap-y-3 justify-center w-full items-center m-4 mt-10">
                     <button
-                        onClick={handleCreateWallet}  // Trigger wallet creation logic when clicked
-                        className="w-full py-2 px-4 text-white font-semibold rounded-full bg-blue-500 hover:bg-blue-600 transition duration-300 focus:outline-none flex items-center justify-center"
+                        onClick={generateWallet}  // Trigger wallet creation logic when clicked
+                        className="w-full py-2 px-4 text-white font-semibold rounded-full bg-black hover:bg-gray-800 transition duration-300 focus:outline-none flex items-center justify-center"
                     >
                         <span className="mr-2">Create a new Wallet</span>
                     </button>
                     <button
                         onClick={handleCreateWallet}  // Trigger wallet creation logic when clicked
-                        className="w-full py-2 px-4 text-white font-semibold rounded-full bg-blue-500 hover:bg-blue-600 transition duration-300 focus:outline-none flex items-center justify-center"
+                        className="w-full py-2 px-4 text-white font-semibold rounded-full bg-black hover:bg-gray-800 transition duration-300 focus:outline-none flex items-center justify-center"
                     >
                         <span className="mr-2">Import Existing Wallet</span>
                     </button>

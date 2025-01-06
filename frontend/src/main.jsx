@@ -8,6 +8,8 @@ import App from './App.jsx'
 import UnlockPage from './pages/UnlockPage.jsx'
 import Signup from './pages/Signup.jsx';
 import CreateWallet from './pages/CreateWallet.jsx';
+import CreatePassword from './pages/CreatePasword.jsx';
+import Mnemonic from './pages/Mnemonic.jsx';
 
 const googleClientId = import.meta.env.VITE_clientID;
 
@@ -24,6 +26,14 @@ const router = createBrowserRouter([
   {
     path: "/createWallet",
     element: <CreateWallet />
+  },
+  {
+    path: "/createPassword",
+    element: <CreatePassword />
+  },
+  {
+    path: "/mnemonic",
+    element: <Mnemonic />
   },
   // {
   //   path: "*",  // Catch-all route for undefined paths
