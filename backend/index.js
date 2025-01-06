@@ -1,0 +1,79 @@
+// server.js
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const User = require('./models/user');
+require('dotenv').config(); // Load environment variables from .env
+
+
+const app = express();
+app.use(express.json())
+const PORT = 3000;
+app.use(cors()); // Enable CORS for all routes
+const mongodburi = process.env.mongoose_uri
+
+// MongoDB connection (replace with your MongoDB connection string)
+mongoose.connect(mongodburi).then(() => {
+    console.log('MongoDB connected');
+}).catch(err => {
+    console.log('MongoDB connection error:', err);
+});
+
+// Basic Route
+app.get('/', (req, res) => {
+    res.send('Hello from Express!');
+});
+
+app.post('/signup', async(req, res) => {
+    const { image, name, email } = req.body;
+    // console.log("userCredentials: ", userCredentials);
+
+    if(!email || !name){
+        return res.status(400).json({
+            message: "Email and name are required"
+        })
+    }
+
+    try{
+        const existingUser = await User.findOne({ email });
+        if(existingUser){
+            console.log("Existing User: ", existingUser);
+            return res.status(200).json({
+                message: "User already exist with this email"
+            })
+        }
+
+        const newUser = new User({
+            email,
+            image,
+            name
+        });
+
+        await newUser.save();
+
+        console.log("New User: ", newUser);
+
+        res.status(210).json({
+            message: "User successfully created",
+            user: newUser
+        })
+        
+    }catch(error){
+        console.log("There was an error: ", error);
+        res.status(500).json({
+            message: "Internal server Error"
+        })
+    }
+})
+
+app.post('/checkCredential', async(req, res) => {
+    const { inputValue } = req.body;
+    // try{
+    //     const 
+    // }
+})
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
