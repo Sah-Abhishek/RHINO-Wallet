@@ -32,6 +32,8 @@ const Signup = () => {
 
                 if(loginResponse.data.message === "User already exist with this email"){
                     navigate('/unlockPage');
+                }else{
+                    navigate('/createWallet')
                 }
 
             }catch(error){
@@ -48,9 +50,9 @@ const Signup = () => {
             <div className="bg-white p-8 pb-12 rounded-xl shadow-lg w-96">
                 <div className="flex justify-center items-center mb-6">
                     <img
-                        src="rhino_logo-ezgif.com-webp-to-jpg-converter-removebg-preview.png"
+                        src="cropped_rhino.png"
                         alt="Logo"
-                        className="w-72 h-72"
+                        className="w-72 h-auto"
                     />
                 </div>
                 <h2 className="text-2xl font-semibold text-center mb-6 text-red-700">RHINO Wallet</h2>
