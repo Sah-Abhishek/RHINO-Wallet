@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     element: <Mnemonic />
   },
   {
-    path: "/home",
+    path: "/",
     element: <Home />
   },
   // {

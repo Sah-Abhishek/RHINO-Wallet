@@ -15,11 +15,34 @@ const useUserStore = create(
       web3Network: "",
       solanaCurrentIndex: 0,
       ethereumCurrentIndex: 0,
+      selectedWallet: {},
+
+      setSelectedWallet: (walletName) => set((state) => {
+        // Filter wallets by the current web3Network
+        
+        const filteredWallets = state.wallet.filter(wallet => wallet.network === state.web3Network);
+
+        if(!walletName){
+          return{
+            selectedWallet: state.wallet.find(wallet => wallet.walletName === "Main Wallet")
+          }
+        }
+        
+        // Find the wallet with the matching walletName
+        const selectedWallet = filteredWallets.find(wallet => wallet.walletName === walletName);
+        
+        // If a matching wallet is found, return it as the selected wallet
+        if (selectedWallet) {
+          return { selectedWallet: selectedWallet };
+        } else {
+          return { selectedWallet: null }; // If not found, reset selectedWallet
+        }
+      }),
 
       setSolanaCurrentIndex: () => set((state) => ({
         solanaCurrentIndex: state.solanaCurrentIndex + 1, 
       })),
-      
+
       setEthereumCurrentIndex: () => set((state) =>( {
         ethereumCurrentIndex: state.ethereumCurrentIndex + 1
       })),

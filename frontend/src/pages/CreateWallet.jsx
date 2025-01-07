@@ -61,7 +61,7 @@ const CreateWallet = () => {
     // Set the appropriate logo based on the selected network
     const getNetworkLogo = (network) => {
         if (network === "solana") {
-            return "solanaLogoMark.png";  // Solana logo
+            return "solana_logo.png";  // Solana logo
         } else if (network === "ethereum") {
             return "etherium_logo.png";  // Ethereum logo
         }
@@ -134,7 +134,7 @@ const CreateWallet = () => {
                                 
                              transform -translate-x-1/2 mt-28 inline-flex items-center mb-4 border border-black rounded-full px-5 py-2 z-10`}
                         >
-                            <img className={`${selectedNetwork === "solana" ? "h-5 w-5" : "h-5 w-5"}`} src={selectedNetwork === "solana" ? "etherium_logo.png" : "solanaLogoMark.png"}
+                            <img className={`${selectedNetwork === "solana" ? "h-5 w-5" : "h-5 w-5"}`} src={selectedNetwork === "solana" ? "etherium_logo.png" : "solana_logo.png"}
                                 alt="Ethereum Logo" />
                             <div className="py-1 px-2 text-black font-semibold text-xs">
                                 {selectedNetwork === "solana" ? "ethereum" : "solana"}
