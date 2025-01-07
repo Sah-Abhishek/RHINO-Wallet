@@ -12,6 +12,27 @@ const useUserStore = create(
       email: '',
       wallet: [],
       mnemonic: [],
+      web3Network: "",
+      solanaCurrentIndex: 0,
+      ethereumCurrentIndex: 0,
+
+      setSolanaCurrentIndex: () => set((state) => ({
+        solanaCurrentIndex: state.solanaCurrentIndex + 1, 
+      })),
+      
+      setEthereumCurrentIndex: () => set((state) =>( {
+        ethereumCurrentIndex: state.ethereumCurrentIndex + 1
+      })),
+
+
+
+      setWeb3Network: (network) => set((state) => ({
+        web3Network: network
+      })),
+
+      addWallet: (keyPair) => set((state) => ({
+        wallet: [...state.wallet, keyPair], // Add the new keyPair to the existing wallet array
+      })),
 
       addMnemonic: (words) => set({
         mnemonic: words

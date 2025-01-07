@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import useUserStore from "../store/userStore";
@@ -8,9 +8,18 @@ import { Buffer } from 'buffer';
 
 const CreateWallet = () => {
     const navigate = useNavigate();
-    const [selectedNetwork, setSelectedNetwork] = useState("solana");
     const [showPopup, setShowPopup] = useState(false);
-    const { addMnemonic } = useUserStore();
+    const { addMnemonic, setWeb3Network, web3Network } = useUserStore();
+    const [selectedNetwork, setSelectedNetwork] = useState(web3Network);
+    const networks = [
+        "ethereum",
+        "solana",
+        "polygon"
+    ]
+    
+    // console.log("This is the previous web3Network: ", web3Network, "  This is the selectedNetwork: ", selectedNetwork);
+
+    
 
     const handleCreateWallet = () => {
         // Logic for creating a wallet goes here
@@ -20,11 +29,34 @@ const CreateWallet = () => {
         // navigate('/dashboard');
     };
 
+    // const handleNetworkClick = () => {
+    //     console.log("This is the previous web3Network: ", web3Network, "\nThis is the previous selectedNetwork: ", selectedNetwork);
+    //     // console.log()
+    //     // Toggle the selected network between Solana and Ethereum
+    //     // setSelectedNetwork(prevNetwork => prevNetwork === "solana" ? "ethereum" : "solana");
+    //     setSelectedNetwork(() => selectedNetwork === "solana" ? "ethereum" : "solana");
+
+    //     console.log("selected Network: ", selectedNetwork, "web3 Network after function: ", web3Network);
+    //     setWeb3Network(selectedNetwork);
+    //     setShowPopup(false);  // Close the popup after selection
+    //     console.log("Wweb3 variable: ", web3Network);
+    // };
+
+
     const handleNetworkClick = () => {
-        // Toggle the selected network between Solana and Ethereum
-        setSelectedNetwork(prevNetwork => prevNetwork === "solana" ? "ethereum" : "solana");
+        console.log("Before toggling: web3Network:", web3Network, " selectedNetwork:", selectedNetwork);
+    
+        // Toggle the selected network (update selectedNetwork)
+        const newNetwork = selectedNetwork === "solana" ? "ethereum" : "solana";
+        setSelectedNetwork(newNetwork); // Update local state (selectedNetwork)
+        setWeb3Network(newNetwork); // Immediately sync the Zustand store state (web3Network)
+    
+        console.log("After toggling: web3Network:", newNetwork, " selectedNetwork:", newNetwork);
         setShowPopup(false);  // Close the popup after selection
     };
+    
+
+    
 
     // Set the appropriate logo based on the selected network
     const getNetworkLogo = (network) => {
@@ -44,7 +76,7 @@ const CreateWallet = () => {
         const mnemonicWords = words.split(" ");
         
         // Log to verify the mnemonicWords is an array
-        console.log("Mnemonic words as array: ", mnemonicWords);
+        // console.log("Mnemonic words as array: ", mnemonicWords);
         
         // Check if mnemonicWords is indeed an array
         if (Array.isArray(mnemonicWords)) {
@@ -97,7 +129,7 @@ const CreateWallet = () => {
                     {/* Ethereum network button (popup) */}
                     {showPopup && (
                         <button
-                            onClick={handleNetworkClick}
+                            onClick={() => handleNetworkClick()}
                             className={`absolute left-1/2
                                 
                              transform -translate-x-1/2 mt-28 inline-flex items-center mb-4 border border-black rounded-full px-5 py-2 z-10`}
@@ -105,7 +137,7 @@ const CreateWallet = () => {
                             <img className={`${selectedNetwork === "solana" ? "h-5 w-5" : "h-5 w-5"}`} src={selectedNetwork === "solana" ? "etherium_logo.png" : "solanaLogoMark.png"}
                                 alt="Ethereum Logo" />
                             <div className="py-1 px-2 text-black font-semibold text-xs">
-                                Ethereum
+                                {selectedNetwork === "solana" ? "ethereum" : "solana"}
                             </div>
                         </button>
                     )}

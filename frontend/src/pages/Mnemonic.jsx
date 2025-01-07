@@ -1,15 +1,11 @@
 import React from "react";
 import useUserStore from "../store/userStore";
+import { generateKeyPairSolana } from "../walletFunctions";
 
 const Mnemonic = () => {
-    // const mnemonic = [
-    //     "wallet", "bridge", "canvas", "deposit",
-    //     "energy", "follow", "garden", "height",
-    //     "island", "jungle", "kidney", "legend"
-    // ];
-
-    const { mnemonic } = useUserStore();
-    console.log(mnemonic);
+    
+    const { mnemonic, addWallet, web3Network, setSolanaCurrentIndex, setEthereumCurrentIndex } = useUserStore();
+    // console.log(mnemonic);
 
     const copyToClipboard = () => {
         const mnemonicString = mnemonic.join(" ");
@@ -23,6 +19,19 @@ const Mnemonic = () => {
             });
     };
 
+    const clickNextHandler = async () => {
+        var wallet;
+        if(web3Network === "solana"){
+            wallet = await generateKeyPairSolana(web3Network, mnemonic, 0, setSolanaCurrentIndex);
+        }else{
+            wallet = await generateKeyPairSolana(web3Network, mnemonic, 0, setEthereumCurrentIndex);
+        }
+
+        // console.log()
+        
+        console.log("This is the key Pair: ", wallet);
+        addWallet(wallet);
+    }
 
     // Split the mnemonic string into an array of words
     // console.log(typeof mnemonicString, mnemonicString);
@@ -62,7 +71,7 @@ const Mnemonic = () => {
                 </div>
 
                 <div className="flex justify-center items-center">
-                    <button className="text-white w-auto mt-8 py-2 px-10 flex items-center justify-center bg-black hover:bg-gray-800 font-semibold rounded-lg border border-black focus:outline-none">
+                    <button onClick={clickNextHandler}  className="text-white w-auto mt-8 py-2 px-10 flex items-center justify-center bg-black hover:bg-gray-800 font-semibold rounded-lg border border-black focus:outline-none">
                         Next
                     </button>
                 </div>
