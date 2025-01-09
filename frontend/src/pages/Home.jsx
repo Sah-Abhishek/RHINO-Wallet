@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
 import useUserStore from "../store/userStore";
 import axios from "axios";
+import SidebarClosed from "../components/SidebarClosed";
+import SidebarOpen from "../components/SidebarOpen";
 
 
 const Home = () => {
 
-    const { name, image, email, setSelectedWallet, selectedWallet } = useUserStore();
+    const { name, image, email, setSelectedWallet, selectedWallet, wallet, web3Network } = useUserStore();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [balance, setBalance] = useState(0);
+    const [networkWallets, setNetworkWallets] = useState([]);
+
+    useEffect(() => {
+        const filteredWallets = wallet.filter(wallet => wallet.network === web3Network);
+        console.log("This is the filteredWallets: ", filteredWallets);
+
+
+    }, [])
+
 
     useEffect(() => {
         setSelectedWallet();
@@ -21,12 +33,12 @@ const Home = () => {
                 publicKey: selectedWallet.keyPair.publicKey
             });
 
-            console.log("This is the response from backend: ", response.data.data.result.value);
+            // console.log("This is the response from backend: ", response.data.data.result.value);
 
             // Check if the response contains the expected structure
             if (response.data.data && response.data.data.result && response.data.data.result.value !== undefined) {
-                setBalance(response.data.data.result.value/1000000000);
-                console.log("This is balance from getBalance: ", response.data.data.result.value);
+                setBalance(response.data.data.result.value / 1000000000);
+                // console.log("This is balance from getBalance: ", response.data.data.result.value);
             } else {
                 console.log("Error: 'result.value' is not found in the response");
             }
@@ -38,15 +50,16 @@ const Home = () => {
 
     useEffect(() => {
         getBalance();
-        console.log("This is the balance: ", balance);
+        // console.log("This is the balance: ", balance);
 
-        console.log(selectedWallet)
+        // console.log(selectedWallet)
     }, [])
 
 
     return (
         <div>
             <img src="cropped_rhino.png" alt="" className=" m-4 h-16 w-auto absolute" />
+            {isSidebarOpen ? <SidebarOpen onClose={() => setIsSidebarOpen(false)} /> : <SidebarClosed onClose={() => setIsSidebarOpen(true)} />}
             <div className="flex h-screen justify-center items-center">
                 <div className="flex flex-col justify-center items-center  rounded-lg h-auto w-auto p-10">
                     <div className="flex items-center p-5 w-96">
@@ -62,7 +75,8 @@ const Home = () => {
 
                     </div>
                     <div className=" w-full pl-6 mb-4">
-                        <p className="font-bold text-3xl">{balance === 0 ? "0   Sol" : balance + "   Sol"}</p>
+                        <p className="font-bold text-3xl">  {balance === 0 ? "0   Sol" : balance.toFixed(4) + "   Sol"}
+                        </p>
                     </div>
                     {/* buttons */}
                     <div className="flex items-center gap-x-6 justify-around w-full">

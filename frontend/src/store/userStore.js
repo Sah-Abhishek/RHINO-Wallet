@@ -17,19 +17,21 @@ const useUserStore = create(
       ethereumCurrentIndex: 0,
       selectedWallet: {},
 
-      setSelectedWallet: (walletName) => set((state) => {
+      setSelectedWallet: (index) => set((state) => {
         // Filter wallets by the current web3Network
+        // console.log("This is the web3network from store.js ", state.web3network);
         
         const filteredWallets = state.wallet.filter(wallet => wallet.network === state.web3Network);
+        console.log("FilteredWallets from store: ", filteredWallets);
 
-        if(!walletName){
+        if(!index){
           return{
-            selectedWallet: state.wallet.find(wallet => wallet.walletName === "Main Wallet")
+            selectedWallet: state.wallet.find(wallet => wallet.index === 0)
           }
         }
         
         // Find the wallet with the matching walletName
-        const selectedWallet = filteredWallets.find(wallet => wallet.walletName === walletName);
+        const selectedWallet = filteredWallets.find(wallet => wallet.index === index);
         
         // If a matching wallet is found, return it as the selected wallet
         if (selectedWallet) {

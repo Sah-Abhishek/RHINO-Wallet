@@ -1,6 +1,6 @@
 import React from "react";
 import useUserStore from "../store/userStore";
-import { generateKeyPairSolana } from "../walletFunctions";
+import { generateWallet } from "../walletFunctions";
 
 const Mnemonic = () => {
     
@@ -22,9 +22,9 @@ const Mnemonic = () => {
     const clickNextHandler = async () => {
         var wallet;
         if(web3Network === "solana"){
-            wallet = await generateKeyPairSolana(web3Network, mnemonic, 0, setSolanaCurrentIndex);
+            wallet = await generateWallet(web3Network, mnemonic, 0, setSolanaCurrentIndex);
         }else{
-            wallet = await generateKeyPairSolana(web3Network, mnemonic, 0, setEthereumCurrentIndex);
+            wallet = await generateWallet(web3Network, mnemonic, 0, setEthereumCurrentIndex);
         }
 
         // console.log()

@@ -8,7 +8,7 @@ import bs58 from 'bs58';
 
 
 
-export const generateKeyPairSolana = async (web3Network, mnemonic, currentIndex, incrementFunction) => {
+export const generateWallet = async (web3Network, mnemonic, currentIndex, incrementFunction) => {
     // const { mnemonic } = useUserStore();
     const walletName = currentIndex === 0 ? "Main Wallet" : `Wallet ${currentIndex}`;
 
@@ -27,6 +27,7 @@ export const generateKeyPairSolana = async (web3Network, mnemonic, currentIndex,
 
 
         return {
+            index: currentIndex,
             network: "solana",
             keyPair: {
                 publicKey: publicKey,
@@ -46,7 +47,9 @@ export const generateKeyPairSolana = async (web3Network, mnemonic, currentIndex,
         incrementFunction();
 
         return {
-            network: "ethereum", keyPair: {
+            index: currentIndex,
+            network: "ethereum",
+            keyPair: {
                 publicKey: keyPair.address,
                 privateKey: privateKey,
             },

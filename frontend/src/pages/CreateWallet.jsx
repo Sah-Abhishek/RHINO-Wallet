@@ -26,21 +26,10 @@ const CreateWallet = () => {
         console.log("Wallet created");
 
         // Navigate to the next page (e.g., dashboard or wallet details page)
-        // navigate('/dashboard');
+        navigate('/');
     };
 
-    // const handleNetworkClick = () => {
-    //     console.log("This is the previous web3Network: ", web3Network, "\nThis is the previous selectedNetwork: ", selectedNetwork);
-    //     // console.log()
-    //     // Toggle the selected network between Solana and Ethereum
-    //     // setSelectedNetwork(prevNetwork => prevNetwork === "solana" ? "ethereum" : "solana");
-    //     setSelectedNetwork(() => selectedNetwork === "solana" ? "ethereum" : "solana");
-
-    //     console.log("selected Network: ", selectedNetwork, "web3 Network after function: ", web3Network);
-    //     setWeb3Network(selectedNetwork);
-    //     setShowPopup(false);  // Close the popup after selection
-    //     console.log("Wweb3 variable: ", web3Network);
-    // };
+    
 
 
     const handleNetworkClick = () => {
@@ -68,7 +57,7 @@ const CreateWallet = () => {
         return "";
     };
 
-    const generateWallet = () => {
+    const handleGenerateWallet = () => {
         // Generate the mnemonic phrase as a string
         const words = generateMnemonic();
         
@@ -146,7 +135,7 @@ const CreateWallet = () => {
                 {/* Create Wallet Button */}
                 <div className="flex flex-col gap-y-3 justify-center w-full items-center m-4 mt-10">
                     <button
-                        onClick={generateWallet}  // Trigger wallet creation logic when clicked
+                        onClick={handleGenerateWallet}  // Trigger wallet creation logic when clicked
                         className="w-full py-2 px-4 text-white font-semibold rounded-full bg-black hover:bg-gray-800 transition duration-300 focus:outline-none flex items-center justify-center"
                     >
                         <span className="mr-2">Create a new Wallet</span>
