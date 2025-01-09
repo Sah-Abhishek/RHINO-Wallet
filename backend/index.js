@@ -109,9 +109,10 @@ app.post('/checkCredential', async (req, res) => {
 
 app.post('/getBalance', async (req, res) => {
     const { publicKey, network } = req.body;
+    var response;
     try {
         if (network === "solana") {
-            const response = await axios.post('https://solana-mainnet.g.alchemy.com/v2/Ti-xz4F2isOh8tuoUBe85YkiPVU47UJ6', {
+            response = await axios.post('https://solana-mainnet.g.alchemy.com/v2/Ti-xz4F2isOh8tuoUBe85YkiPVU47UJ6', {
                 "jsonrpc": "2.0",
                 "id": 1,
                 "method": "getBalance",
@@ -120,14 +121,16 @@ app.post('/getBalance', async (req, res) => {
                 ]
             })
 
+            // console.log("This is the response: ", response.data);
+
         }
         else if(network === "ethereum"){
-            const response = await axios.post('https://eth-mainnet.g.alchemy.com/v2/Ti-xz4F2isOh8tuoUBe85YkiPVU47UJ6',{
+            response = await axios.post('https://eth-mainnet.g.alchemy.com/v2/Ti-xz4F2isOh8tuoUBe85YkiPVU47UJ6',{
 
             });
         }
 
-        console.log("This is the data from solana: ", response);
+        // console.log("This is the data from solana: ", response.data);
 
         const data = response.data;
 
