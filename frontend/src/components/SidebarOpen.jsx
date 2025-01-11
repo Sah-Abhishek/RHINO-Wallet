@@ -7,7 +7,7 @@ import ChangeWeb3Network from "./ChangeWeb3Network";
 import ChangeWeb3NetworkPopup from "./ChangeWeb3NetworkPopup";
 
 const SidebarOpen = ({ onClose }) => {
-    const { name, image, email, wallet, solanaCurrentIndex, ethereumCurrentIndex, web3Network, mnemonic, setSolanaCurrentIndex, setEthereumCurrentIndex, addWallet } = useUserStore();
+    const { name, image, email, wallets, solanaCurrentIndex, ethereumCurrentIndex, web3Network, mnemonic, setSolanaCurrentIndex, setEthereumCurrentIndex, addWallet } = useUserStore();
     const [filteredWallets, setFilteredWallets] = useState([]);
     const [isChangeNetworkPopupOpen, setIsChangeNetworkPopupOpen] = useState(false);
 
@@ -18,18 +18,19 @@ const SidebarOpen = ({ onClose }) => {
         } else if (web3Network === "ethereum") {
             returnedWallet = await generateWallet(web3Network, mnemonic, ethereumCurrentIndex, setEthereumCurrentIndex);
         }
-        addWallet(returnedWallet);
+        addWallet(web3Network, returnedWallet);
     };
 
     useEffect(() => {
-        console.log("Wallets are: ", wallet);
+        // console.log("Wallets are: ", wallets);
 
         // Filter out null or undefined elements and then filter by network
-        const localWallet = wallet.filter(w => w !== null && w !== undefined && w.network === web3Network);
+        const localWallet = wallets[web3Network];
+        // console.log("These are the local wallets: ", localWallet);
         setFilteredWallets(localWallet);
 
-        console.log("This is the filteredWallets: ", filteredWallets);
-    }, [wallet, web3Network]);
+        // console.log("This is the filteredWallets: ", filteredWallets);
+    }, [wallets, web3Network]);
 
     const toggleChangeNetworkPopup = () => {
         setIsChangeNetworkPopupOpen(prev => !prev);

@@ -10,7 +10,10 @@ const useUserStore = create(
       name: '',
       image: '',
       email: '',
-      wallet: [],
+      wallets: {
+        solana: [],
+        ethereum: []
+      },
       mnemonic: [],
       web3Network: "",
       solanaCurrentIndex: 0,
@@ -18,35 +21,38 @@ const useUserStore = create(
       selectedWallet: {},
 
       setSelectedWallet: (index) => set((state) => {
-        // Filter wallets by the current web3Network
-        // console.log("This is the web3network from store.js ", state.web3network);
-        
-        const filteredWallets = state.wallet.filter(wallet => wallet.network === state.web3Network);
-        console.log("FilteredWallets from store: ", filteredWallets);
+        const networkWallets = state.wallets[state.web3Network];
+        // console.log("These are the wallets before setSelectedWallet function: ", state.wallets);
+        // console.log("This is the state.web3Network: ", state.web3Network);
+        // console.log("These are the networkWallets: ", networkWallets);
+        if (!index) {
+          return {
+            selectedWallet: networkWallets.find(wallet => wallet.index === 0)
+          };
+        }
 
-        if(!index){
-          return{
-            selectedWallet: state.wallet.find(wallet => wallet.index === 0)
-          }
-        }
-        
-        // Find the wallet with the matching walletName
-        const selectedWallet = filteredWallets.find(wallet => wallet.index === index);
+        const selectedWallet = networkWallets.find(wallet => wallet.index === index);
+
         console.log("SelectedWallet: ", selectedWallet);
-        
-        // If a matching wallet is found, return it as the selected wallet
-        if (selectedWallet) {
-          return { selectedWallet: selectedWallet };
-        } else {
-          return { selectedWallet: null }; // If not found, reset selectedWallet
-        }
+
+        return { selectedWallet: selectedWallet }
+
+        // if (selectedWallet) {
+        //   return { selectedWallet: selectedWallet };
+        // } else {
+        //   return { selectedWallet: null }; // If not found, reset selectedWallet
+        // }
+
+
+
+
       }),
 
       setSolanaCurrentIndex: () => set((state) => ({
-        solanaCurrentIndex: state.solanaCurrentIndex + 1, 
+        solanaCurrentIndex: state.solanaCurrentIndex + 1,
       })),
 
-      setEthereumCurrentIndex: () => set((state) =>( {
+      setEthereumCurrentIndex: () => set((state) => ({
         ethereumCurrentIndex: state.ethereumCurrentIndex + 1
       })),
 
@@ -56,15 +62,29 @@ const useUserStore = create(
         web3Network: network
       })),
 
-      addWallet: (keyPair) => set((state) => ({
-        wallet: [...state.wallet, keyPair], // Add the new keyPair to the existing wallet array
-      })),
+      addWallet: (network, keyPair) => set((state) => {
+        // Create a new wallet structure with the keyPair and network
+        // console.log("AddWallet executed from userStore: ");
+        const updatedWallets = { ...state.wallets };
+        // console.log("This is the netowork: ", network);
+        // console.log("This is the updatedWallets: ", updatedWallets);
+
+        if (network === 'solana') {
+          updatedWallets.solana = [...updatedWallets.solana, keyPair];
+        } else if (network === 'ethereum') {
+          updatedWallets.ethereum = [...updatedWallets.ethereum, keyPair];
+        }
+
+        return {
+          wallets: updatedWallets
+        };
+      }),
 
       addMnemonic: (words) => set({
         mnemonic: words
       }),
 
-      
+
 
       // Action to set user data
       setUser: (user) => {

@@ -108,7 +108,8 @@ app.post('/checkCredential', async (req, res) => {
 })
 
 app.post('/getBalance', async (req, res) => {
-    const { publicKey, network } = req.body;
+    const { publicKey } = req.body;
+    const network = "solana";
     var response;
     try {
         if (network === "solana") {
@@ -121,7 +122,7 @@ app.post('/getBalance', async (req, res) => {
                 ]
             })
 
-            // console.log("This is the response: ", response.data);
+            // console.log("This is the response: ", response);
 
         }
         else if(network === "ethereum"){

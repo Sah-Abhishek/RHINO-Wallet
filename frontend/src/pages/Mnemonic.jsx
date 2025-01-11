@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useUserStore from "../store/userStore";
 import { generateWallet } from "../walletFunctions";
 
 const Mnemonic = () => {
     
-    const { mnemonic, addWallet, web3Network, setSolanaCurrentIndex, setEthereumCurrentIndex } = useUserStore();
+    const { mnemonic, addWallet, web3Network, setSolanaCurrentIndex, setEthereumCurrentIndex , setSelectedWallet, wallets } = useUserStore();
     // console.log(mnemonic);
 
     const copyToClipboard = () => {
@@ -30,8 +30,15 @@ const Mnemonic = () => {
         // console.log()
         
         console.log("This is the key Pair: ", wallet);
-        addWallet(wallet);
+        addWallet(web3Network, wallet);
+        setSelectedWallet(0);
+        console.log("This is the wallet after addWallet: ", wallet);
     }
+
+    useEffect(() => {
+        setSelectedWallet(0);
+        console.log("aaaaaaaaaaaaaaaaa", wallets);
+    }, [addWallet]);
 
     // Split the mnemonic string into an array of words
     // console.log(typeof mnemonicString, mnemonicString);

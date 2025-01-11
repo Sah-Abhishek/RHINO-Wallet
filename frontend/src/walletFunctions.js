@@ -28,7 +28,6 @@ export const generateWallet = async (web3Network, mnemonic, currentIndex, increm
 
         return {
             index: currentIndex,
-            network: "solana",
             keyPair: {
                 publicKey: publicKey,
                 privateKey: privateKey
@@ -48,7 +47,6 @@ export const generateWallet = async (web3Network, mnemonic, currentIndex, increm
 
         return {
             index: currentIndex,
-            network: "ethereum",
             keyPair: {
                 publicKey: keyPair.address,
                 privateKey: privateKey,

@@ -13,15 +13,15 @@ const Home = () => {
     const [networkWallets, setNetworkWallets] = useState([]);
 
     useEffect(() => {
-        const filteredWallets = wallet.filter(wallet => wallet.network === web3Network);
-        console.log("This is the filteredWallets: ", filteredWallets);
+        const filteredWallets = wallet[web3Network];
+        // console.log("This is the filteredWallets: ", filteredWallets);
 
 
     }, [])
 
 
     useEffect(() => {
-        setSelectedWallet();
+        setSelectedWallet(0);
 
     }, [])
 
@@ -68,7 +68,7 @@ const Home = () => {
                         <div className="px-4 text-3xl font-bold">
                             {name}
                             <div className="inline-flex border border-black rounded-lg p-2 w-auto gap-x-3 items-center mt-3">
-                                <img src={`${selectedWallet.network}_logo.png`} alt="" className="h-5" />
+                                <img src={`${web3Network}_logo.png`} alt="" className="h-5" />
                                 <p className="text-sm">{selectedWallet.walletName}</p>
                             </div>
                         </div>
