@@ -1,21 +1,54 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import useUserStore from "../store/userStore";
 
 const UnlockPage = () => {
   const [inputValue, setInputValue] = useState("");
+  const navigate = useNavigate();
+  const [errorMsg, setErrorMsg] = useState('');
+  const { email } = useUserStore();
+  const [loading, setLoading] = useState(false);
+  
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
   const handleUnlockClick = async () => {
-    try{
-        const response = await axios.get();
+    // console.log("This is the email: ", email);
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3000/checkCredential', {
+        email, inputValue
+      });
 
-    }catch(error){
-        console.log("There was an error while checking password");
+      // If password is incorrect (401 status), display an error message
+      if (response.status === 401) {
+        setErrorMsg("Password Incorrect");
+      }
+
+      console.log("This is the response: ", response.error);
+
+      // If the status is 200 (successful login)
+      if (response.status === 200) {
+        sessionStorage.setItem('sessionActive', true);
+        navigate('/');
+      }
+
+    } catch (error) {
+      setErrorMsg("Incorrect Password");
+      console.log("There was an error while checking password", error);
+    }finally{
+      setLoading(false);
     }
-    // Logic to unlock the page (you can replace this with actual functionality)
-    alert("Unlocking: " + inputValue);
   };
 
   return (
@@ -28,9 +61,10 @@ const UnlockPage = () => {
             className="w-72 h-72"
           />
         </div>
-        
+
         {/* Input Element */}
         <input
+          ref={inputRef}
           type="text"
           value={inputValue}
           onChange={handleInputChange}
@@ -41,10 +75,17 @@ const UnlockPage = () => {
         {/* Unlock Button */}
         <button
           onClick={handleUnlockClick}
-          className="w-full py-2 px-4 flex items-center justify-center text-black font-semibold rounded-lg border border-black  focus:outline-none"
+          className="w-full py-2 px-4 flex items-center justify-center text-white bg-black hover:bg-gray-900 font-semibold rounded-lg border border-black  focus:outline-none"
         >
-          Unlock
+          {loading ? "loading" : "Unlock"}
         </button>
+
+        {/* Error Message */}
+        {errorMsg && (
+          <div className="mt-4 text-center text-red-500 text-sm font-bold">
+            {errorMsg}
+          </div>
+        )}
       </div>
     </div>
   );

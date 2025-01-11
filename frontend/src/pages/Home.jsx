@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+
 import useUserStore from "../store/userStore";
 import axios from "axios";
 import SidebarClosed from "../components/SidebarClosed";
 import SidebarOpen from "../components/SidebarOpen";
+import { useNavigate } from "react-router-dom";
 
 
 const Home = () => {
@@ -11,6 +13,21 @@ const Home = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [balance, setBalance] = useState(0);
     const [networkWallets, setNetworkWallets] = useState([]);
+    const navigate = useNavigate(); // To programmatically navigate the user
+
+
+    useEffect(() => {
+        // Check if the session exists
+        const session = sessionStorage.getItem('sessionActive');
+        if (!session) {
+            // If no session, redirect to /unlock page
+            navigate("/unlockPage");
+        }
+
+        const filteredWallets = wallet[web3Network];
+        // console.log("This is the filteredWallets: ", filteredWallets);
+
+    }, []);
 
     useEffect(() => {
         const filteredWallets = wallet[web3Network];
@@ -23,7 +40,9 @@ const Home = () => {
     useEffect(() => {
         setSelectedWallet(0);
 
-    }, [])
+    }, []);
+
+
 
 
     const getBalance = async () => {

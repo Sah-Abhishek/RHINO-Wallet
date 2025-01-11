@@ -101,10 +101,31 @@ app.post('/saveCredential', async (req, res) => {
 })
 
 app.post('/checkCredential', async (req, res) => {
-    const { inputValue } = req.body;
-    // try{
-    //     const 
-    // }
+    const { email, inputValue } = req.body;
+    // console.log("This is the email: ", email);
+    if (!email || !inputValue) {
+        return res.status(400).json({ message: "Email and password are required." });
+    }
+    try {
+        const existingUser = await User.findOne({ email: email });
+        // console.log("This is the existing User: ", existingUser);
+
+        if (existingUser.password === inputValue) {
+            res.status(200).json({
+                message: "Paword matched"
+            })
+        } else {
+            res.status(401).json({
+                message: "Unauthorized"
+            })
+        }
+
+    } catch (error) {
+        console.log("Internal Server Error: ", error);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
 })
 
 app.post('/getBalance', async (req, res) => {
@@ -125,8 +146,8 @@ app.post('/getBalance', async (req, res) => {
             // console.log("This is the response: ", response);
 
         }
-        else if(network === "ethereum"){
-            response = await axios.post('https://eth-mainnet.g.alchemy.com/v2/Ti-xz4F2isOh8tuoUBe85YkiPVU47UJ6',{
+        else if (network === "ethereum") {
+            response = await axios.post('https://eth-mainnet.g.alchemy.com/v2/Ti-xz4F2isOh8tuoUBe85YkiPVU47UJ6', {
 
             });
         }
