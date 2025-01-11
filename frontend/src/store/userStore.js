@@ -32,6 +32,7 @@ const useUserStore = create(
         
         // Find the wallet with the matching walletName
         const selectedWallet = filteredWallets.find(wallet => wallet.index === index);
+        console.log("SelectedWallet: ", selectedWallet);
         
         // If a matching wallet is found, return it as the selected wallet
         if (selectedWallet) {

@@ -1,6 +1,7 @@
 
 import { EllipsisVertical } from 'lucide-react';
 import useUserStore from '../store/userStore';
+import { useEffect } from 'react';
 
 const WalletCard = ({ wallet }) => {
     const { selectedWallet, setSelectedWallet, web3Network } = useUserStore();
@@ -8,15 +9,20 @@ const WalletCard = ({ wallet }) => {
     // console.log("This is the web3wallet: ", web3Network);
 
     const handleSelectWallet = () => {
-        setSelectedWallet(wallet.index);
-    }
+        setSelectedWallet(wallet.index);  // Assuming wallet.index is the value to set
+    };
+
+    // If you need to log after the state is updated, use useEffect
+    // useEffect(() => {
+    //     console.log("Selected wallet: ", selectedWallet);
+    // }, [selectedWallet]); // This will run whenever `selectedWallet` changes
 
     return (
         <div
             onClick={handleSelectWallet}
             className={`flex items-center border justify-between px-4 border-black mt-4 rounded-lg ${selectedWallet.index === wallet.index ? "bg-black text-white" : "bg-white text-black"} cursor-pointer`}>
             <div className="m-2">
-            <img src={`${web3Network}_logo.png`} alt="" className="h-7" />
+                <img src={`${web3Network}_logo.png`} alt="" className="h-7" />
             </div>
             <div className='font-semibold'>
                 {wallet.walletName}
