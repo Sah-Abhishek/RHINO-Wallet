@@ -1,23 +1,45 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useUserStore from "../store/userStore";
 import axios from "axios";
 import SidebarClosed from "../components/SidebarClosed";
 import SidebarOpen from "../components/SidebarOpen";
 import { useNavigate } from "react-router-dom";
-import { DollarSign } from "lucide-react";
+import CoinCard from "../components/CoinCard";
+import { IconBxDollar } from "../components/DollarIcon";
+import { IconLucideIndianRupee } from "../components/RupeeIcon";
 
 const Home = () => {
-    const { name, image, email, setSelectedWallet, selectedWallet, wallet, web3Network, } = useUserStore();
+    const { name, image, email, setSelectedWallet, selectedWallet, web3Network, } = useUserStore();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [balance, setBalance] = useState(0);
     const [balanceInUsd, setBalanceInUsd] = useState({ ethereum: 0, solana: 0 });
     const [balanceInInr, setBalanceInInr] = useState({ ethereum: 0, solana: 0 });
     const [loadingBalance, setLoadingBalance] = useState(false);
     const currencySelected = 'usd';
+    const menuRef = useRef(null);
+    const [coinPrice, setCoinPrice] = useState({
+        solana: {
+            inr: 0,
+            usd: 0
+        },
+        ethereum: {
+            inr: 0,
+            usd: 0
+        }
+    })
     const navigate = useNavigate(); // To programmatically navigate the user
+
+
+
+    useEffect(() => {
+        if (!name || !email || !image) {
+            navigate('/signup');
+        }
+    }, [name, email, image, navigate]);
 
     useEffect(() => {
         // Check if the session exists
+
         const session = sessionStorage.getItem('sessionActive');
         if (!session) {
             navigate("/unlockPage");
@@ -45,6 +67,7 @@ const Home = () => {
 
             if (response.status === 200) {
                 if (currencyResponse.data && currencyResponse.data.price) {
+                    setCoinPrice(currencyResponse.data.price);
                     if (currencyResponse.data.price.solana) {
                         setBalanceInInr(prevState => ({
                             ...prevState,
@@ -129,13 +152,13 @@ const Home = () => {
 
                     <div className="w-full pl-6 mb-4">
                         {loadingBalance ? (
-                            <div class="flex flex-row gap-2 h-11 items-center">
-                                <div class="w-4 h-4 rounded-full bg-black animate-bounce"></div>
+                            <div className="flex flex-row gap-2 h-11 items-center">
+                                <div className="w-4 h-4 rounded-full bg-black animate-bounce"></div>
                                 <div
-                                    class="w-4 h-4 rounded-full bg-black animate-bounce [animation-delay:-.3s]"
+                                    className="w-4 h-4 rounded-full bg-black animate-bounce [animation-delay:-.3s]"
                                 ></div>
                                 <div
-                                    class="w-4 h-4 rounded-full bg-black animate-bounce [animation-delay:-.5s]"
+                                    className="w-4 h-4 rounded-full bg-black animate-bounce [animation-delay:-.5s]"
                                 ></div>
                             </div>
 
@@ -144,12 +167,13 @@ const Home = () => {
                                 {web3Network === "solana" ? (
                                     currencySelected === 'usd' ? (
                                         <p className="inline-flex items-center">
-                                            <DollarSign size={35} strokeWidth={3} className="mr-1" />
+                                            <IconBxDollar size={35} strokeWidth={3} className="mr-1" />
                                             {balanceInUsd.solana.toFixed(2)}
                                             <span className="text-gray-700 text-2xl">&nbsp;USD</span>
                                         </p>
                                     ) : (
                                         <p className="inline-flex items-center">
+                                            <IconLucideIndianRupee />
                                             {balanceInInr.solana.toFixed(2)}
                                             <span className="text-gray-700 text-2xl"> INR</span>
                                         </p>
@@ -157,12 +181,13 @@ const Home = () => {
                                 ) : (
                                     currencySelected === 'usd' ? (
                                         <p className="inline-flex items-center">
-                                            <DollarSign size={35} strokeWidth={3} className="mr-1" />
+                                            <IconBxDollar size={35} strokeWidth={3} className="mr-1" />
                                             {balanceInUsd.ethereum.toFixed(2)}
                                             <span className="text-gray-700 text-2xl">&nbsp;USD</span>
                                         </p>
                                     ) : (
                                         <p className="inline-flex items-center">
+                                            <IconLucideIndianRupee />
                                             {balanceInInr.ethereum.toFixed(2)}
                                             <span className="text-gray-700 text-2xl"> INR</span>
                                         </p>
@@ -173,8 +198,8 @@ const Home = () => {
                     </div>
 
                     {/* buttons */}
-                    <div className="flex items-center mt-5 gap-x-6 justify-around w-full">
-                        <div className="flex items-center flex-col">
+                    <div className="flex items-center mt-5 gap-x-6 justify-around w-full cursor-not-allowed">
+                        <div className="flex items-center flex-col cursor-not-allowed">
                             <div className="border-2 border-black rounded-full p-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-10">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75 12 3m0 0 3.75 3.75M12 3v18" />
@@ -182,7 +207,7 @@ const Home = () => {
                             </div>
                             <p className="text-lg font-bold">Send</p>
                         </div>
-                        <div className="flex items-center flex-col">
+                        <div className="flex items-center flex-col cursor-not-allowed">
                             <div className="border-2 border-black rounded-full p-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-10">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3" />
@@ -190,7 +215,7 @@ const Home = () => {
                             </div>
                             <p className="text-lg font-bold">Receive</p>
                         </div>
-                        <div className="flex items-center flex-col">
+                        <div className="flex items-center flex-col cursor-not-allowed">
                             <div className="border-2 border-black rounded-full p-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-10">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
@@ -198,6 +223,16 @@ const Home = () => {
                             </div>
                             <p className="text-lg font-bold">Swap</p>
                         </div>
+                    </div>
+                    <div className="mt-16 space-y-7">
+                        <CoinCard
+                            coinName={web3Network}
+                            balance={balance}
+                            balanceInUsd={balanceInUsd}
+                            coinPrice={coinPrice}
+                            currency={currencySelected}
+                        />
+
                     </div>
                 </div>
             </div>

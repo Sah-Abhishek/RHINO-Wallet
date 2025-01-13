@@ -2,14 +2,16 @@ import useUserStore from "../store/userStore";
 import WalletCard from "./WalletCard";
 import { generateWallet } from "../walletFunctions";
 import { useEffect, useState } from "react";
-import { Menu } from "lucide-react";
+import { Menu, Settings } from "lucide-react";
 import ChangeWeb3Network from "./ChangeWeb3Network";
 import ChangeWeb3NetworkPopup from "./ChangeWeb3NetworkPopup";
+import { toast } from "react-hot-toast";
 
 const SidebarOpen = ({ onClose }) => {
     const { name, image, email, wallets, solanaCurrentIndex, ethereumCurrentIndex, web3Network, mnemonic, setSolanaCurrentIndex, setEthereumCurrentIndex, addWallet } = useUserStore();
     const [filteredWallets, setFilteredWallets] = useState([]);
     const [isChangeNetworkPopupOpen, setIsChangeNetworkPopupOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleAddWallet = async () => {
         var returnedWallet;
@@ -34,7 +36,7 @@ const SidebarOpen = ({ onClose }) => {
 
     const toggleChangeNetworkPopup = () => {
         setIsChangeNetworkPopupOpen(prev => !prev);
-        
+
     };
 
     return (
@@ -47,8 +49,11 @@ const SidebarOpen = ({ onClose }) => {
                         <div className="text-sm">{email}</div>
                     </h1>
 
-                    <div onClick={onClose} className="absolute top-7 right-7 cursor-pointer">
+                    <div onClick={onClose} className="absolute top-5 right-5 cursor-pointer">
                         <Menu />
+                    </div>
+                    <div onClick={() => setIsMenuOpen(true)} className="relative -top-3 right-5 cursor-pointer">
+                        <Settings />
                     </div>
                 </div>
 
@@ -70,13 +75,31 @@ const SidebarOpen = ({ onClose }) => {
                     <div onClick={handleAddWallet} className="text-blue-500 mt-4 flex justify-center text-lg cursor-pointer hover:text-blue-700">
                         <h2 className="">+ Add new Wallet</h2>
                     </div>
+                    {/* <div className="flex justify-center font-bold text-white ">
+                        <button className="bg-blue-500 rounded-lg px-4 py-2" onClick={handleClick}>Show Toast</button>
+
+                    </div> */}
+
                 </div>
 
                 {/* Change Web3 Network at the bottom */}
                 <div className="flex gap-y-2 flex-col mt-auto justify-center items-center">
-                    {isChangeNetworkPopupOpen && <ChangeWeb3NetworkPopup onClose={setIsChangeNetworkPopupOpen}/>}
-                    <ChangeWeb3Network clickChangeNetwork={toggleChangeNetworkPopup} />
+                    {isChangeNetworkPopupOpen && <ChangeWeb3NetworkPopup onClose={setIsChangeNetworkPopupOpen} />}
+                    <ChangeWeb3Network isChangeNetworkPopupOpen={isChangeNetworkPopupOpen} clickChangeNetwork={toggleChangeNetworkPopup} />
                 </div>
+                {isMenuOpen && (
+                <div ref={menuRef} className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-md p-2">
+                    <ul>
+                        <li>
+                            <button onClick={handleRename} className="w-full text-left text-black hover:text-gray-600 py-1 px-2">Rename</button>
+                        </li>
+                        <li>
+                            <button onClick={handleDelete} className="w-full text-left text-black hover:text-gray-600 py-1 px-2">Delete</button>
+                        </li>
+                        
+                    </ul>
+                </div>
+            )}
             </div>
         </div>
     );

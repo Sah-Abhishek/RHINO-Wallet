@@ -22,8 +22,37 @@ const useUserStore = create(
       currencySelected: 'usd',
 
       setCurrencySelected: (currency) => set((state) => ({
-        currency: currency
+        setCurrencySelected: currency
       })),
+
+      deleteWallet: (index, network) => set((state) => {
+        // Get the current network wallets (Solana or Ethereum)
+        const networkWallets = state.wallets[network];
+
+        // Filter out the wallet by index (remove the wallet at the given index)
+        const updatedWallets = networkWallets.filter(wallet => wallet.index !== index);
+
+        // Return the updated state with the filtered wallets
+        return {
+          wallets: {
+            ...state.wallets,
+            [network]: updatedWallets,  // Update the specific network wallets
+          },
+        };
+      }),
+
+      renameWallet: (index, network, newName) => set((state) => {
+        // Update the wallet name for the given index in the specified network
+        const updatedWallets = { ...state.wallets };
+        const networkWallets = updatedWallets[network];
+        const walletIndex = networkWallets.findIndex(wallet => wallet.index === index);
+        
+        if (walletIndex !== -1) {
+            networkWallets[walletIndex].walletName = newName;
+        }
+        
+        return { wallets: updatedWallets };
+    }),
 
       setSelectedWallet: (index) => set((state) => {
         const networkWallets = state.wallets[state.web3Network];
