@@ -19,34 +19,26 @@ const useUserStore = create(
       solanaCurrentIndex: 0,
       ethereumCurrentIndex: 0,
       selectedWallet: {},
+      currencySelected: 'usd',
+
+      setCurrencySelected: (currency) => set((state) => ({
+        currency: currency
+      })),
 
       setSelectedWallet: (index) => set((state) => {
         const networkWallets = state.wallets[state.web3Network];
-        // console.log("These are the wallets before setSelectedWallet function: ", state.wallets);
-        // console.log("This is the state.web3Network: ", state.web3Network);
-        // console.log("These are the networkWallets: ", networkWallets);
-        if (!index) {
+        // Reset selectedWallet based on the new network
+        if (!index && networkWallets.length > 0) {
           return {
-            selectedWallet: networkWallets.find(wallet => wallet.index === 0)
+            selectedWallet: networkWallets[0]  // Select the first wallet by default
           };
         }
 
         const selectedWallet = networkWallets.find(wallet => wallet.index === index);
-
         console.log("SelectedWallet: ", selectedWallet);
-
-        return { selectedWallet: selectedWallet }
-
-        // if (selectedWallet) {
-        //   return { selectedWallet: selectedWallet };
-        // } else {
-        //   return { selectedWallet: null }; // If not found, reset selectedWallet
-        // }
-
-
-
-
+        return { selectedWallet: selectedWallet || {} };  // Fallback if no wallet is found
       }),
+
 
       setSolanaCurrentIndex: () => set((state) => ({
         solanaCurrentIndex: state.solanaCurrentIndex + 1,

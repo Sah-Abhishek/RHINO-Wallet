@@ -1,89 +1,123 @@
 import { useEffect, useState } from "react";
-
 import useUserStore from "../store/userStore";
 import axios from "axios";
 import SidebarClosed from "../components/SidebarClosed";
 import SidebarOpen from "../components/SidebarOpen";
 import { useNavigate } from "react-router-dom";
-
+import { DollarSign } from "lucide-react";
 
 const Home = () => {
-
-    const { name, image, email, setSelectedWallet, selectedWallet, wallet, web3Network } = useUserStore();
+    const { name, image, email, setSelectedWallet, selectedWallet, wallet, web3Network, } = useUserStore();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [balance, setBalance] = useState(0);
-    const [networkWallets, setNetworkWallets] = useState([]);
+    const [balanceInUsd, setBalanceInUsd] = useState({ ethereum: 0, solana: 0 });
+    const [balanceInInr, setBalanceInInr] = useState({ ethereum: 0, solana: 0 });
+    const [loadingBalance, setLoadingBalance] = useState(false);
+    const currencySelected = 'usd';
     const navigate = useNavigate(); // To programmatically navigate the user
-
 
     useEffect(() => {
         // Check if the session exists
         const session = sessionStorage.getItem('sessionActive');
         if (!session) {
-            // If no session, redirect to /unlock page
             navigate("/unlockPage");
         }
-
-        const filteredWallets = wallet[web3Network];
-        // console.log("This is the filteredWallets: ", filteredWallets);
-
-    }, []);
-
-    useEffect(() => {
-        const filteredWallets = wallet[web3Network];
-        // console.log("This is the filteredWallets: ", filteredWallets);
-
-
-    }, [])
-
+    }, [navigate]);
 
     useEffect(() => {
         setSelectedWallet(0);
-
-    }, []);
-
-
-
+    }, [setSelectedWallet]);
 
     const getBalance = async () => {
         try {
+            setLoadingBalance(true);
+
+            // Fetch the balance of the selected wallet
             const response = await axios.post('http://localhost:3000/getBalance', {
-                network: selectedWallet.network,
+                network: web3Network,
                 publicKey: selectedWallet.keyPair.publicKey
             });
 
-            // console.log("This is the response from backend: ", response.data.data.result.value);
+            // Fetch the price data (USD and INR) for Solana and Ethereum
+            const currencyResponse = await axios.post('http://localhost:3000/getCoinPrice', {
+                network: web3Network
+            });
 
-            // Check if the response contains the expected structure
-            if (response.data.data && response.data.data.result && response.data.data.result.value !== undefined) {
-                setBalance(response.data.data.result.value / 1000000000);
-                // console.log("This is balance from getBalance: ", response.data.data.result.value);
-            } else {
-                console.log("Error: 'result.value' is not found in the response");
+            if (response.status === 200) {
+                if (currencyResponse.data && currencyResponse.data.price) {
+                    if (currencyResponse.data.price.solana) {
+                        setBalanceInInr(prevState => ({
+                            ...prevState,
+                            solana: currencyResponse.data.price.solana.inr
+                        }));
+                        setBalanceInUsd(prevState => ({
+                            ...prevState,
+                            solana: currencyResponse.data.price.solana.usd
+                        }));
+                    }
+                    if (currencyResponse.data.price.ethereum) {
+                        if (web3Network === "ethereum") {
+                            setBalanceInInr(prevState => ({
+                                ...prevState,
+                                ethereum: currencyResponse.data.price.ethereum.inr * response.data.balance
+                            }));
+                        } else {
+                            setBalanceInUsd(prevState => ({
+                                ...prevState,
+                                ethereum: currencyResponse.data.price.ethereum.usd
+                            }));
+                        }
+                    }
+                }
+            }
+
+            // Calculate the balance in SOL or ETH
+            if (response.data && response.data.balance !== undefined) {
+                if (response.data.network === "solana") {
+                    const solBalance = response.data.balance / 1000000000; // Convert from lamports to SOL
+                    setBalance(solBalance);
+                    setBalanceInUsd(prevState => ({
+                        ...prevState,
+                        solana: solBalance * currencyResponse.data.price.solana.usd
+                    }));
+                    setBalanceInInr(prevState => ({
+                        ...prevState,
+                        solana: solBalance * currencyResponse.data.price.solana.inr
+                    }));
+                } else if (response.data.network === "ethereum") {
+                    const ethBalance = Number(response.data.balance) / (1e18); // Convert from wei to ETH
+                    setBalance(ethBalance);
+                    setBalanceInUsd(prevState => ({
+                        ...prevState,
+                        ethereum: ethBalance * currencyResponse.data.price.ethereum.usd
+                    }));
+                    setBalanceInInr(prevState => ({
+                        ...prevState,
+                        ethereum: ethBalance * currencyResponse.data.price.ethereum.inr
+                    }));
+                }
             }
         } catch (error) {
             console.log("There was some error: ", error);
+        } finally {
+            setLoadingBalance(false);
         }
     };
 
-
     useEffect(() => {
-        getBalance();
-        // console.log("This is the balance: ", balance);
-
-        // console.log(selectedWallet)
-    }, [])
-
+        if (selectedWallet && web3Network) {
+            getBalance();
+        }
+    }, [web3Network, selectedWallet]);
 
     return (
         <div>
-            <img src="cropped_rhino.png" alt="" className=" m-4 h-16 w-auto absolute" />
+            <img src="cropped_rhino.png" alt="" className="m-4 h-16 w-auto absolute" />
             {isSidebarOpen ? <SidebarOpen onClose={() => setIsSidebarOpen(false)} /> : <SidebarClosed onClose={() => setIsSidebarOpen(true)} />}
             <div className="flex h-screen justify-center items-center">
-                <div className="flex flex-col justify-center items-center  rounded-lg h-auto w-auto p-10">
+                <div className="flex flex-col justify-center items-center rounded-lg h-auto w-auto p-10">
                     <div className="flex items-center p-5 w-96">
                         <img src={image} alt="pfp" className="rounded-full" />
-
                         <div className="px-4 text-3xl font-bold">
                             {name}
                             <div className="inline-flex border border-black rounded-lg p-2 w-auto gap-x-3 items-center mt-3">
@@ -91,20 +125,60 @@ const Home = () => {
                                 <p className="text-sm">{selectedWallet.walletName}</p>
                             </div>
                         </div>
+                    </div>
 
+                    <div className="w-full pl-6 mb-4">
+                        {loadingBalance ? (
+                            <div class="flex flex-row gap-2 h-11 items-center">
+                                <div class="w-4 h-4 rounded-full bg-black animate-bounce"></div>
+                                <div
+                                    class="w-4 h-4 rounded-full bg-black animate-bounce [animation-delay:-.3s]"
+                                ></div>
+                                <div
+                                    class="w-4 h-4 rounded-full bg-black animate-bounce [animation-delay:-.5s]"
+                                ></div>
+                            </div>
+
+                        ) : (
+                            <div className="text-4xl font-bold">
+                                {web3Network === "solana" ? (
+                                    currencySelected === 'usd' ? (
+                                        <p className="inline-flex items-center">
+                                            <DollarSign size={35} strokeWidth={3} className="mr-1" />
+                                            {balanceInUsd.solana.toFixed(2)}
+                                            <span className="text-gray-700 text-2xl">&nbsp;USD</span>
+                                        </p>
+                                    ) : (
+                                        <p className="inline-flex items-center">
+                                            {balanceInInr.solana.toFixed(2)}
+                                            <span className="text-gray-700 text-2xl"> INR</span>
+                                        </p>
+                                    )
+                                ) : (
+                                    currencySelected === 'usd' ? (
+                                        <p className="inline-flex items-center">
+                                            <DollarSign size={35} strokeWidth={3} className="mr-1" />
+                                            {balanceInUsd.ethereum.toFixed(2)}
+                                            <span className="text-gray-700 text-2xl">&nbsp;USD</span>
+                                        </p>
+                                    ) : (
+                                        <p className="inline-flex items-center">
+                                            {balanceInInr.ethereum.toFixed(2)}
+                                            <span className="text-gray-700 text-2xl"> INR</span>
+                                        </p>
+                                    )
+                                )}
+                            </div>
+                        )}
                     </div>
-                    <div className=" w-full pl-6 mb-4">
-                        <p className="font-bold text-3xl">  {balance === 0 ? "0   Sol" : balance.toFixed(4) + "   Sol"}
-                        </p>
-                    </div>
+
                     {/* buttons */}
-                    <div className="flex items-center gap-x-6 justify-around w-full">
+                    <div className="flex items-center mt-5 gap-x-6 justify-around w-full">
                         <div className="flex items-center flex-col">
                             <div className="border-2 border-black rounded-full p-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-10">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75 12 3m0 0 3.75 3.75M12 3v18" />
                                 </svg>
-
                             </div>
                             <p className="text-lg font-bold">Send</p>
                         </div>
@@ -113,25 +187,17 @@ const Home = () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-10">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3" />
                                 </svg>
-
-
                             </div>
-                            <p className="text-lg font-bold">Recieve</p>
+                            <p className="text-lg font-bold">Receive</p>
                         </div>
                         <div className="flex items-center flex-col">
                             <div className="border-2 border-black rounded-full p-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-10">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
                                 </svg>
-
-
-
                             </div>
                             <p className="text-lg font-bold">Swap</p>
                         </div>
-
-
-
                     </div>
                 </div>
             </div>

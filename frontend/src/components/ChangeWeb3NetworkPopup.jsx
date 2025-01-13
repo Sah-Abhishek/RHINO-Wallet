@@ -1,10 +1,11 @@
 import useUserStore from "../store/userStore";
 
 const ChangeWeb3NetworkPopup = ({ onClose }) => {
-    const { web3Network, setWeb3Network } = useUserStore();
+    const { web3Network, setWeb3Network, setSelectedWallet, wallets } = useUserStore();
 
     const toggleWeb3Network = () => {
         web3Network === "solana" ? setWeb3Network("ethereum") : setWeb3Network("solana");
+        setSelectedWallet(0);
         console.log("Web3Network toggled")
         onClose();
     }

@@ -5,6 +5,7 @@ const cors = require('cors');
 const User = require('./models/user');
 require('dotenv').config(); // Load environment variables from .env
 const axios = require('axios');
+const CryptoPrice = require('./models/coin');
 
 
 const app = express();
@@ -20,10 +21,148 @@ mongoose.connect(mongodburi).then(() => {
     console.log('MongoDB connection error:', err);
 });
 
+
+
 // Basic Route
 app.get('/', (req, res) => {
     res.send('Hello from Express!');
 });
+
+
+const fetchPrice = async () => {
+    try {
+        const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=solana,ethereum&vs_currencies=usd,inr');
+
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.status === 429) {
+            // Handle rate limiting (429 error)
+            console.log("Rate limit hit. Returning null for price data.");
+            return null;
+        }
+        console.log("Error fetching price data: ", error);
+        return null;
+    }
+};
+
+const saveInDB = async () => {
+    const data = await fetchPrice(); // Fetch price data
+
+    if (data) {
+        try {
+            // Save Solana data
+            const solanaCoin = await CryptoPrice.findOne({ coin: "solana" });
+            if (!solanaCoin) {
+                await CryptoPrice.create({
+                    coin: "solana",
+                    price: {
+                        usd: data.solana.usd,
+                        inr: data.solana.inr
+                    }
+                });
+                console.log("Solana data added to the database");
+            } else {
+                solanaCoin.price.usd = data.solana.usd;
+                solanaCoin.price.inr = data.solana.inr;
+                await solanaCoin.save();
+                console.log("Solana data updated in the database");
+            }
+
+            // Save Ethereum data
+            const ethereumCoin = await CryptoPrice.findOne({ coin: "ethereum" });
+            if (!ethereumCoin) {
+                await CryptoPrice.create({
+                    coin: "ethereum",
+                    price: {
+                        usd: data.ethereum.usd,
+                        inr: data.ethereum.inr
+                    }
+                });
+                console.log("Ethereum data added to the database");
+            } else {
+                ethereumCoin.price.usd = data.ethereum.usd;
+                ethereumCoin.price.inr = data.ethereum.inr;
+                await ethereumCoin.save();
+                console.log("Ethereum data updated in the database");
+            }
+
+            return data;
+
+        } catch (error) {
+            console.log("Error saving price data to the database: ", error);
+            return null;
+        }
+    }
+    return null; // If data is null due to rate limit or other errors
+};
+
+const getPricesFromDB = async () => {
+    try {
+        const solanaCoin = await CryptoPrice.findOne({ coin: "solana" });
+        const ethereumCoin = await CryptoPrice.findOne({ coin: "ethereum" });
+
+        if (solanaCoin && ethereumCoin) {
+            return {
+                solana: {
+                    usd: solanaCoin.price.usd,
+                    inr: solanaCoin.price.inr
+                },
+                ethereum: {
+                    usd: ethereumCoin.price.usd,
+                    inr: ethereumCoin.price.inr
+                }
+            };
+        } else {
+            console.log("Prices not found in the database");
+            return null;
+        }
+    } catch (error) {
+        console.log("Error fetching prices from database: ", error);
+        return null;
+    }
+};
+
+app.post('/getCoinPrice', async (req, res) => {
+    const { publicKey } = req.body;
+    const network = "solana";
+    // console.log("Solana");
+
+    try {
+        const price = await saveInDB(); // Try fetching and saving price to DB
+
+        if (!price) {
+            // If rate limit is hit, fetch prices from DB
+            console.log("Rate limit hit or error fetching price, using database data");
+            const dbPrice = await getPricesFromDB();
+
+            if (dbPrice) {
+                return res.status(200).json({ price: dbPrice });
+            } else {
+                return res.status(500).json({
+                    error: "Unable to fetch price data, please try again later."
+                });
+            }
+        }
+
+        // Return the fetched price
+        return res.status(200).json({
+            price: price
+        });
+
+    } catch (error) {
+        console.log("Internal Server Error: ", error);
+        res.status(500).json({
+            error: error
+        });
+    }
+});
+
+
+
+
+
+
+
 
 app.post('/signup', async (req, res) => {
     const { image, name, email } = req.body;
@@ -129,45 +268,55 @@ app.post('/checkCredential', async (req, res) => {
 })
 
 app.post('/getBalance', async (req, res) => {
-    const { publicKey } = req.body;
-    const network = "solana";
-    var response;
+    const { publicKey, network } = req.body;
+    let response;
+
     try {
-        if (network === "solana") {
+        if (network === 'solana') {
             response = await axios.post('https://solana-mainnet.g.alchemy.com/v2/Ti-xz4F2isOh8tuoUBe85YkiPVU47UJ6', {
                 "jsonrpc": "2.0",
                 "id": 1,
                 "method": "getBalance",
                 "params": [
-                    "768wBd9yHNLf5eKeA4wFA8cu9V6JSruW6i3fyMsjyWRv"
+                    publicKey
                 ]
             })
-
-            // console.log("This is the response: ", response);
-
-        }
-        else if (network === "ethereum") {
+            return res.status(200).json({
+                network: network,
+                message: "Balance fetched successfully",
+                balance: response.data.result.value
+            })
+        } else if (network === 'ethereum') {
             response = await axios.post('https://eth-mainnet.g.alchemy.com/v2/Ti-xz4F2isOh8tuoUBe85YkiPVU47UJ6', {
+                "id": 1,
+                "jsonrpc": "2.0",
+                "params": [publicKey, "latest"],
+                "method": "eth_getBalance"
+            })
 
+            const hexBalance = response.data.result;
+
+            const decimalBalance = BigInt(hexBalance).toString(10);
+
+            return res.status(200).json({network: network,
+                message: "Balance fetched successfully",
+                balance: decimalBalance,
             });
+
         }
-
-        // console.log("This is the data from solana: ", response.data);
-
-        const data = response.data;
-
-        res.status(200).json({
-            message: "Balance fetched successfully",
-            data
-        })
-
+        else {
+            res.status(401).json({
+                message: "We do not have information for this coin"
+            })
+        }
     } catch (error) {
-        console.log("There was some error", error);
+        console.log("There was some error: ", error);
         res.status(500).json({
             message: "Internal Server Error"
         })
     }
 })
+
 
 // Start server
 app.listen(PORT, () => {
