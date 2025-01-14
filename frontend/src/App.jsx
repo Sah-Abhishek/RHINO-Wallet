@@ -15,7 +15,7 @@ function App() {
 
     if (loggedIn === null || loggedIn === '') {
       navigate('/signup');
-      return;
+      // return null;
     }
   }, []);  // Empty dependency array because we only need to check on initial render
 

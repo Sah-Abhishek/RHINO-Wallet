@@ -30,6 +30,7 @@ const Home = () => {
     })
     const navigate = useNavigate(); // To programmatically navigate the user
     const [qrModalOpen, setQrModalOpen] = useState(false);
+    const backurl = import.meta.env.VITE_BACKURL;
 
 
 
@@ -58,19 +59,19 @@ const Home = () => {
             setLoadingBalance(true);
 
             // Fetch the balance of the selected wallet
-            
+
 
             // Fetch the price data (USD and INR) for Solana and Ethereum
-            const currencyResponse = await axios.post('http://localhost:3000/getCoinPrice', {
+            const currencyResponse = await axios.post(`${backurl}/getCoinPrice`, {
                 network: web3Network
             });
 
             let response;
             // if (selectedWallet.keyPair.publicKey) {
-                response = await axios.post('http://localhost:3000/getBalance', {
-                    network: web3Network,
-                    publicKey: selectedWallet.keyPair.publicKey
-                });
+            response = await axios.post(`${backurl}/getBalance`, {
+                network: web3Network,
+                publicKey: selectedWallet.keyPair.publicKey
+            });
             // }
 
 
@@ -172,37 +173,39 @@ const Home = () => {
                             </div>
 
                         ) : (
-                            <div className="text-4xl font-bold">
-                                {web3Network === "solana" ? (
-                                    currencySelected === 'usd' ? (
-                                        <p className="inline-flex items-center">
-                                            <IconBxDollar size={35} strokeWidth={3} className="mr-1" />
-                                            {balanceInUsd.solana.toFixed(2)}
-                                            <span className="text-gray-700 text-2xl">&nbsp;USD</span>
-                                        </p>
+                            
+                                <div className="text-4xl font-bold">
+                                    {web3Network === "solana" ? (
+                                        currencySelected === 'usd' ? (
+                                            <p className="inline-flex items-center">
+                                                <IconBxDollar size={35} strokeWidth={3} className="mr-1" />
+                                                {balanceInUsd.solana.toFixed(2)}
+                                                <span className="text-gray-700 text-2xl">&nbsp;USD</span>
+                                            </p>
+                                        ) : (
+                                            <p className="inline-flex items-center">
+                                                <IconLucideIndianRupee />
+                                                {balanceInInr.solana.toFixed(2)}
+                                                <span className="text-gray-700 text-2xl"> INR</span>
+                                            </p>
+                                        )
                                     ) : (
-                                        <p className="inline-flex items-center">
-                                            <IconLucideIndianRupee />
-                                            {balanceInInr.solana.toFixed(2)}
-                                            <span className="text-gray-700 text-2xl"> INR</span>
-                                        </p>
-                                    )
-                                ) : (
-                                    currencySelected === 'usd' ? (
-                                        <p className="inline-flex items-center">
-                                            <IconBxDollar size={35} strokeWidth={3} className="mr-1" />
-                                            {balanceInUsd.ethereum.toFixed(2)}
-                                            <span className="text-gray-700 text-2xl">&nbsp;USD</span>
-                                        </p>
-                                    ) : (
-                                        <p className="inline-flex items-center">
-                                            <IconLucideIndianRupee />
-                                            {balanceInInr.ethereum.toFixed(2)}
-                                            <span className="text-gray-700 text-2xl"> INR</span>
-                                        </p>
-                                    )
-                                )}
-                            </div>
+                                        currencySelected === 'usd' ? (
+                                            <p className="inline-flex items-center">
+                                                <IconBxDollar size={35} strokeWidth={3} className="mr-1" />
+                                                {balanceInUsd.ethereum.toFixed(2)}
+                                                <span className="text-gray-700 text-2xl">&nbsp;USD</span>
+                                            </p>
+                                        ) : (
+                                            <p className="inline-flex items-center">
+                                                <IconLucideIndianRupee />
+                                                {balanceInInr.ethereum.toFixed(2)}
+                                                <span className="text-gray-700 text-2xl"> INR</span>
+                                            </p>
+                                        )
+                                    )}
+                                </div>
+                            
                         )}
                     </div>
 
@@ -243,7 +246,13 @@ const Home = () => {
                         />
 
                     </div>
-                    <PublicKeyQRModal isOpen={qrModalOpen} onClose={() => setQrModalOpen(false)} publicKey={selectedWallet.keyPair.publicKey}/>
+                    {selectedWallet && selectedWallet.keyPair ? (
+                        <PublicKeyQRModal
+                            isOpen={qrModalOpen}
+                            onClose={() => setQrModalOpen(false)}
+                            publicKey={selectedWallet.keyPair.publicKey}
+                        />
+                    ) : null}
                 </div>
             </div>
         </div>

@@ -10,6 +10,8 @@ const CreatePassword = () => {
   const { email } = useUserStore();
   const navigate = useNavigate();
 
+  const backurl = import.meta.env.VITE_BACKURL;
+
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
@@ -26,7 +28,7 @@ const CreatePassword = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/saveCredential', { email: email ,password: inputValue });
+      const response = await axios.post(`${backurl}/saveCredential`, { email: email ,password: inputValue });
       if(response.status === 201){
         navigate('/createWallet');
       }

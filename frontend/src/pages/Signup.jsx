@@ -9,6 +9,8 @@ const Signup = () => {
     const { setUser } = useUserStore();
 
     const navigate = useNavigate();
+    const backurl = import.meta.env.VITE_BACKURL;
+
 
     const login = useGoogleLogin({
         onSuccess: async (response) => {
@@ -26,7 +28,7 @@ const Signup = () => {
                 console.log("User Credentials: ", res.data);
 
 
-                const loginResponse = await axios.post('http://localhost:3000/signup', {
+                const loginResponse = await axios.post(`${backurl}/signup`, {
                     image: userCredentials.picture,
                     name: userCredentials.name,
                     email: userCredentials.email

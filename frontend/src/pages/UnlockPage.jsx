@@ -9,6 +9,7 @@ const UnlockPage = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const { email } = useUserStore();
   const [loading, setLoading] = useState(false);
+  const backurl = import.meta.env.VITE_BACKURL;
   
   const inputRef = useRef(null);
 
@@ -26,7 +27,7 @@ const UnlockPage = () => {
     // console.log("This is the email: ", email);
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3000/checkCredential', {
+      const response = await axios.post(`${backurl}/checkCredential`, {
         email, inputValue
       });
 
@@ -65,7 +66,7 @@ const UnlockPage = () => {
         {/* Input Element */}
         <input
           ref={inputRef}
-          type="text"
+          type="password"
           value={inputValue}
           onChange={handleInputChange}
           placeholder="Password"
