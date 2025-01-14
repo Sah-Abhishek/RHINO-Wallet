@@ -20,6 +20,7 @@ const CoinCard = ({ balance, balanceInUsd, coinName, coinPrice, currency }) => {
     }, [name, email, image, navigate]);
     
     
+    
     const { web3Network, selectedWallet } = useUserStore();
     console.log("This is the balance: ", balance);
 
