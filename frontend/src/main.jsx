@@ -11,6 +11,8 @@ import CreateWallet from './pages/CreateWallet.jsx';
 import CreatePassword from './pages/CreatePasword.jsx';
 import Mnemonic from './pages/Mnemonic.jsx';
 import Home from './pages/Home.jsx';
+import { Toaster } from 'react-hot-toast';
+import ImportWallet from './pages/importWallet.jsx';
 
 const googleClientId = import.meta.env.VITE_clientID;
 
@@ -38,7 +40,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <Home />
+    element: <App />
+  },
+  {
+    path: "/ImportWallet",
+    element: <ImportWallet />
   },
   // {
   //   path: "*",  // Catch-all route for undefined paths
@@ -50,7 +56,10 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
 
   <GoogleOAuthProvider clientId={googleClientId}>
-
+    <Toaster
+      position="top-center"
+      reverseOrder={false}
+    />
     <RouterProvider router={router} />
 
   </GoogleOAuthProvider>

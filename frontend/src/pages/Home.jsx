@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import CoinCard from "../components/CoinCard";
 import { IconBxDollar } from "../components/DollarIcon";
 import { IconLucideIndianRupee } from "../components/RupeeIcon";
+import PublicKeyQRModal from "../components/PublicKeyqrModal";
 
 const Home = () => {
     const { name, image, email, setSelectedWallet, selectedWallet, web3Network, } = useUserStore();
@@ -28,14 +29,16 @@ const Home = () => {
         }
     })
     const navigate = useNavigate(); // To programmatically navigate the user
+    const [qrModalOpen, setQrModalOpen] = useState(false);
 
 
 
-    useEffect(() => {
-        if (!name || !email || !image) {
-            navigate('/signup');
-        }
-    }, [name, email, image, navigate]);
+    // useEffect(() => {
+    //     console.log("This is executing: ");
+    //     if (!name || !email || !image) {
+    //         navigate('/signup');
+    //     }
+    // }, [name, email, image, navigate]);
 
     useEffect(() => {
         // Check if the session exists
@@ -55,15 +58,21 @@ const Home = () => {
             setLoadingBalance(true);
 
             // Fetch the balance of the selected wallet
-            const response = await axios.post('http://localhost:3000/getBalance', {
-                network: web3Network,
-                publicKey: selectedWallet.keyPair.publicKey
-            });
+            
 
             // Fetch the price data (USD and INR) for Solana and Ethereum
             const currencyResponse = await axios.post('http://localhost:3000/getCoinPrice', {
                 network: web3Network
             });
+
+            let response;
+            // if (selectedWallet.keyPair.publicKey) {
+                response = await axios.post('http://localhost:3000/getBalance', {
+                    network: web3Network,
+                    publicKey: selectedWallet.keyPair.publicKey
+                });
+            // }
+
 
             if (response.status === 200) {
                 if (currencyResponse.data && currencyResponse.data.price) {
@@ -198,7 +207,7 @@ const Home = () => {
                     </div>
 
                     {/* buttons */}
-                    <div className="flex items-center mt-5 gap-x-6 justify-around w-full cursor-not-allowed">
+                    <div className="flex items-center mt-5 gap-x-6 justify-around w-full">
                         <div className="flex items-center flex-col cursor-not-allowed">
                             <div className="border-2 border-black rounded-full p-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-10">
@@ -207,7 +216,7 @@ const Home = () => {
                             </div>
                             <p className="text-lg font-bold">Send</p>
                         </div>
-                        <div className="flex items-center flex-col cursor-not-allowed">
+                        <div onClick={() => setQrModalOpen(true)} className="flex items-center flex-col ">
                             <div className="border-2 border-black rounded-full p-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-10">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3" />
@@ -215,7 +224,7 @@ const Home = () => {
                             </div>
                             <p className="text-lg font-bold">Receive</p>
                         </div>
-                        <div className="flex items-center flex-col cursor-not-allowed">
+                        <div className="flex items-center flex-col">
                             <div className="border-2 border-black rounded-full p-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-10">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
@@ -234,6 +243,7 @@ const Home = () => {
                         />
 
                     </div>
+                    <PublicKeyQRModal isOpen={qrModalOpen} onClose={() => setQrModalOpen(false)} publicKey={selectedWallet.keyPair.publicKey}/>
                 </div>
             </div>
         </div>

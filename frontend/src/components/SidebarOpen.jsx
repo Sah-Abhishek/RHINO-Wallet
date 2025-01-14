@@ -67,7 +67,9 @@ const SidebarOpen = ({ onClose }) => {
                                 <WalletCard key={index} wallet={wallet} />
                             ))
                         ) : (
-                            <p>No wallets found</p>
+                            <div className=" p-2 m-2 rounded-lg flex justify-center">
+                                <p className="center">No wallets found</p>
+                            </div>
                         )}
                     </div>
 
@@ -88,18 +90,18 @@ const SidebarOpen = ({ onClose }) => {
                     <ChangeWeb3Network isChangeNetworkPopupOpen={isChangeNetworkPopupOpen} clickChangeNetwork={toggleChangeNetworkPopup} />
                 </div>
                 {isMenuOpen && (
-                <div ref={menuRef} className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-md p-2">
-                    <ul>
-                        <li>
-                            <button onClick={handleRename} className="w-full text-left text-black hover:text-gray-600 py-1 px-2">Rename</button>
-                        </li>
-                        <li>
-                            <button onClick={handleDelete} className="w-full text-left text-black hover:text-gray-600 py-1 px-2">Delete</button>
-                        </li>
-                        
-                    </ul>
-                </div>
-            )}
+                    <div ref={menuRef} className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-md p-2">
+                        <ul>
+                            <li>
+                                <button onClick={handleRename} className="w-full text-left text-black hover:text-gray-600 py-1 px-2">Rename</button>
+                            </li>
+                            <li>
+                                <button onClick={handleDelete} className="w-full text-left text-black hover:text-gray-600 py-1 px-2">Delete</button>
+                            </li>
+
+                        </ul>
+                    </div>
+                )}
             </div>
         </div>
     );

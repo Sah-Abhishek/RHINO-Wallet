@@ -15,7 +15,7 @@ const useUserStore = create(
         ethereum: []
       },
       mnemonic: [],
-      web3Network: "",
+      web3Network: "solana",
       solanaCurrentIndex: 0,
       ethereumCurrentIndex: 0,
       selectedWallet: {},

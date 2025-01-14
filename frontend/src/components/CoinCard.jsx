@@ -12,13 +12,12 @@ const CoinCard = ({ balance, balanceInUsd, coinName, coinPrice, currency }) => {
     const { name, image, email, } = useUserStore();
 
 
-    useEffect(() => {
-        console.log("llllllllllllllllllllll", email, name, image);
-        if (!name || !email || !image) {
-            navigate('/signup');
-        }
-    }, [name, email, image, navigate]);
-    
+    // useEffect(() => {
+    //     if (!name || !email || !image) {
+    //         navigate('/signup');
+    //     }
+    // }, [name, email, image, navigate]);
+
     
     
     const { web3Network, selectedWallet } = useUserStore();
@@ -26,6 +25,13 @@ const CoinCard = ({ balance, balanceInUsd, coinName, coinPrice, currency }) => {
 
     const { currencySelected, } = useUserStore();
     console.log("This is the coinPrice: ", balanceInUsd);
+
+    if(!coinName){
+        return null;
+    }
+    
+    
+    
     return (
         <div className="flex items-center justify-between rounded-3xl border-2 border-gray-800 bg-white p-4 w-96 shadow-lg">
             <div className="flex items-center gap-3">

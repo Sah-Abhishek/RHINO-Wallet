@@ -33,10 +33,13 @@ const Signup = () => {
                 })
 
                 if (loginResponse.data.message === "User already exist with this email") {
+                    localStorage.setItem('loggedIn', true);
                     setUser(res.data);
                     navigate('/unlockPage');
                 } else {
                     setUser(res.data);
+                    localStorage.setItem('loggedIn', true);
+
                     navigate('/createPassword')
                 }
 

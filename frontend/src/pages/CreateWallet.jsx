@@ -57,6 +57,11 @@ const CreateWallet = () => {
         return "";
     };
 
+    const handleImportMnemonic = () => {
+
+    }
+    
+
     const handleGenerateWallet = () => {
         // Generate the mnemonic phrase as a string
         const words = generateMnemonic();
@@ -125,7 +130,7 @@ const CreateWallet = () => {
                         >
                             <img className={`${selectedNetwork === "solana" ? "h-5 w-5" : "h-5 w-5"}`} src={selectedNetwork === "solana" ? "ethereum_logo.png" : "solana_logo.png"}
                                 alt="Ethereum Logo" />
-                            <div className="py-1 px-2 text-black font-semibold text-xs">
+                            <div className="py-1 px-2 pr-3 text-black font-semibold text-xs">
                                 {selectedNetwork === "solana" ? "ethereum" : "solana"}
                             </div>
                         </button>
@@ -141,7 +146,7 @@ const CreateWallet = () => {
                         <span className="mr-2">Create a new Wallet</span>
                     </button>
                     <button
-                        onClick={handleCreateWallet}  // Trigger wallet creation logic when clicked
+                        onClick={() => navigate('/importWallet')}  // Trigger wallet creation logic when clicked
                         className="w-full py-2 px-4 text-white font-semibold rounded-full bg-black hover:bg-gray-800 transition duration-300 focus:outline-none flex items-center justify-center"
                     >
                         <span className="mr-2">Import Existing Wallet</span>

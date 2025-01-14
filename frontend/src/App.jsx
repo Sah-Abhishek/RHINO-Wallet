@@ -1,24 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Signup from './pages/Signup'
+import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-
+import Home from './pages/Home';
+import useUserStore from './store/userStore';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const { name, image, email } = useUserStore();
+  const navigate = useNavigate(); // To programmatically navigate the user
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem('loggedIn');  // Declare loggedIn inside useEffect
+    console.log("This should execute: ", loggedIn);
+
+    if (loggedIn === null || loggedIn === '') {
+      navigate('/signup');
+      return;
+    }
+  }, []);  // Empty dependency array because we only need to check on initial render
 
   return (
     <>
-      <Signup />
-      <Toaster
-        position="top-center"
-        reverseOrder={false}
-
-      />
+      <Home />
+      
     </>
-  )
+  );
 }
 
-export default App
+export default App;
