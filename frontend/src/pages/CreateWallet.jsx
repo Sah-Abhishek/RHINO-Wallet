@@ -62,7 +62,7 @@ const CreateWallet = () => {
     }
     
 
-    const handleGenerateWallet = () => {
+    const handleGenerateWallet = async() => {
         // Generate the mnemonic phrase as a string
         const words = generateMnemonic();
         

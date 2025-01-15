@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json())
 const PORT = 3000;
 const corsOptions = {
-    origin: 'https://rhino-wallet.vercel.app',  // Allow only this website
+    origin: ['https://rhino-wallet.vercel.app', 'http://localhost:5173'],  // Allow only this website
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Optional: Specify allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'] // Optional: Specify allowed headers
 };

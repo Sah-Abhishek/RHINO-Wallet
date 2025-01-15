@@ -14,13 +14,22 @@ export const generateWallet = async (web3Network, mnemonic, currentIndex, increm
 
     if (web3Network === "solana") {
         const mnemonicString = mnemonic.join(" ");
-        const seed = mnemonicToSeed(mnemonicString);
+        // console.log("This is the mnemonic String: ", mnemonicString);
+        const seed = await mnemonicToSeed(mnemonicString);
+        // console.log("This is the seed Phrase: ", seed);
         const path = `m/44'/501'/${currentIndex}'/0'`;
+        // console.log("This is the path: ", path);
         const derivedSeed = derivePath(path, seed.toString("hex")).key;
+        // console.log("This is the derivedSeed: ", derivedSeed);
         const secret = nacl.sign.keyPair.fromSeed(derivedSeed).secretKey;
+        // console.log("This is the secret: ", secret);
         const keyPair = Keypair.fromSecretKey(secret)
+        // console.log("This is the keyPair: ", keyPair);
         const publicKey = keyPair.publicKey.toBase58();
-        const privateKey = bs58.encode(keyPair.secretKey);;
+        // console.log("This is the public Key: ", publicKey);
+        const privateKey = bs58.encode(keyPair.secretKey);
+        // console.log("This is the private Key: ", privateKey);
+
         // console.log("This is the publicKey solana: ", publicKey);
         // console.log("This is the privateKey solana: ", privateKey);
         incrementFunction();
