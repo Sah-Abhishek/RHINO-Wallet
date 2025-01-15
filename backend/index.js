@@ -15,7 +15,10 @@ const corsOptions = {
     origin: 'https://rhino-wallet.vercel.app',  // Allow only this website
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Optional: Specify allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'] // Optional: Specify allowed headers
-  };const mongodburi = process.env.mongoose_uri
+};
+app.use(cors(corsOptions));
+
+const mongodburi = process.env.mongoose_uri
 
 // MongoDB connection (replace with your MongoDB connection string)
 mongoose.connect(mongodburi).then(() => {
@@ -301,7 +304,8 @@ app.post('/getBalance', async (req, res) => {
 
             const decimalBalance = BigInt(hexBalance).toString(10);
 
-            return res.status(200).json({network: network,
+            return res.status(200).json({
+                network: network,
                 message: "Balance fetched successfully",
                 balance: decimalBalance,
             });
