@@ -52,9 +52,9 @@ const SidebarOpen = ({ onClose }) => {
                     <div onClick={onClose} className="absolute top-5 right-5 cursor-pointer">
                         <Menu />
                     </div>
-                    <div onClick={() => setIsMenuOpen(true)} className="relative -top-3 right-5 cursor-pointer">
+                    {/* <div onClick={() => setIsMenuOpen(true)} className="relative -top-3 right-5 cursor-pointer">
                         <Settings />
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Wallets display section */}
