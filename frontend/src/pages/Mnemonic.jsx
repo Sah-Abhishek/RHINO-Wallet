@@ -41,10 +41,10 @@ const Mnemonic = () => {
 
         // console.log()
 
-        console.log("This is the key Pair: ", wallet);
+        // console.log("This is the key Pair: ", wallet);
         addWallet(web3Network, wallet);
         setSelectedWallet(0);
-        console.log("This is the wallet after addWallet: ", wallet);
+        // console.log("This is the wallet after addWallet: ", wallet);
     }
 
     useEffect(() => {

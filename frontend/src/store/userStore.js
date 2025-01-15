@@ -64,7 +64,7 @@ const useUserStore = create(
         }
 
         const selectedWallet = networkWallets.find(wallet => wallet.index === index);
-        console.log("SelectedWallet: ", selectedWallet);
+        // console.log("SelectedWallet: ", selectedWallet);
         return { selectedWallet: selectedWallet || {} };  // Fallback if no wallet is found
       }),
 
@@ -109,7 +109,7 @@ const useUserStore = create(
 
       // Action to set user data
       setUser: (user) => {
-        console.log('Setting user data:', user); // Log to the console when setUser is called
+        // console.log('Setting user data:', user); // Log to the console when setUser is called
         set({
           name: user.name,
           image: user.picture,

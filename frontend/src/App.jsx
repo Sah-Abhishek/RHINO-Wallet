@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     const loggedIn = localStorage.getItem('loggedIn');  // Declare loggedIn inside useEffect
-    console.log("This should execute: ", loggedIn);
+    // console.log("This should execute: ", loggedIn);
 
     if (loggedIn === null || loggedIn === '') {
       navigate('/signup');

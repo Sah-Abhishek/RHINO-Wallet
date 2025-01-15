@@ -35,7 +35,7 @@ const CreatePassword = () => {
       // Handle the response (if needed)
       // alert("Password saved successfully");
     } catch (error) {
-      console.log("There was an error while checking password");
+      console.log("There was an error while checking password", error);
     }
 
     // Logic to unlock the page (you can replace this with actual functionality)

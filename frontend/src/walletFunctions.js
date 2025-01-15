@@ -21,8 +21,8 @@ export const generateWallet = async (web3Network, mnemonic, currentIndex, increm
         const keyPair = Keypair.fromSecretKey(secret)
         const publicKey = keyPair.publicKey.toBase58();
         const privateKey = bs58.encode(keyPair.secretKey);;
-        console.log("This is the publicKey solana: ", publicKey);
-        console.log("This is the privateKey solana: ", privateKey);
+        // console.log("This is the publicKey solana: ", publicKey);
+        // console.log("This is the privateKey solana: ", privateKey);
         incrementFunction();
 
 
@@ -42,7 +42,7 @@ export const generateWallet = async (web3Network, mnemonic, currentIndex, increm
         const child = hdNode.derivePath(derivationPath);
         const privateKey = child.privateKey;
         const keyPair = new Wallet(privateKey);
-        console.log("KeyPair from wallet functions: ", keyPair.address);
+        // console.log("KeyPair from wallet functions: ", keyPair.address);
         incrementFunction();
 
         return {

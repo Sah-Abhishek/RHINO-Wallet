@@ -36,7 +36,7 @@ const UnlockPage = () => {
         setErrorMsg("Password Incorrect");
       }
 
-      console.log("This is the response: ", response.error);
+      // console.log("This is the response: ", response.error);
 
       // If the status is 200 (successful login)
       if (response.status === 200) {

@@ -14,7 +14,7 @@ const Signup = () => {
 
     const login = useGoogleLogin({
         onSuccess: async (response) => {
-            console.log("Google login successful", response);
+            // console.log("Google login successful", response);
 
             // Ensure response.credential exists (for implicit flow)
 
@@ -25,7 +25,7 @@ const Signup = () => {
                     }
                 });
                 const userCredentials = res.data;
-                console.log("User Credentials: ", res.data);
+                // console.log("User Credentials: ", res.data);
 
 
                 const loginResponse = await axios.post(`${backurl}/signup`, {

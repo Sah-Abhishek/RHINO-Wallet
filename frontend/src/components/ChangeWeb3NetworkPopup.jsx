@@ -6,7 +6,7 @@ const ChangeWeb3NetworkPopup = ({ onClose }) => {
     const toggleWeb3Network = () => {
         web3Network === "solana" ? setWeb3Network("ethereum") : setWeb3Network("solana");
         setSelectedWallet(0);
-        console.log("Web3Network toggled")
+        // console.log("Web3Network toggled")
         onClose();
     }
 

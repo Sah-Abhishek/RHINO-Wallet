@@ -23,7 +23,7 @@ const CreateWallet = () => {
 
     const handleCreateWallet = () => {
         // Logic for creating a wallet goes here
-        console.log("Wallet created");
+        // console.log("Wallet created");
 
         // Navigate to the next page (e.g., dashboard or wallet details page)
         navigate('/');
@@ -33,14 +33,14 @@ const CreateWallet = () => {
 
 
     const handleNetworkClick = () => {
-        console.log("Before toggling: web3Network:", web3Network, " selectedNetwork:", selectedNetwork);
+        // console.log("Before toggling: web3Network:", web3Network, " selectedNetwork:", selectedNetwork);
     
         // Toggle the selected network (update selectedNetwork)
         const newNetwork = selectedNetwork === "solana" ? "ethereum" : "solana";
         setSelectedNetwork(newNetwork); // Update local state (selectedNetwork)
         setWeb3Network(newNetwork); // Immediately sync the Zustand store state (web3Network)
     
-        console.log("After toggling: web3Network:", newNetwork, " selectedNetwork:", newNetwork);
+        // console.log("After toggling: web3Network:", newNetwork, " selectedNetwork:", newNetwork);
         setShowPopup(false);  // Close the popup after selection
     };
     

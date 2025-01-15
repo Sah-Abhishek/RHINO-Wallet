@@ -21,14 +21,14 @@ const ImportWallet = () => {
     };
 
     const handleNetworkClick = () => {
-        console.log("Before toggling: web3Network:", web3Network, " selectedNetwork:", selectedNetwork);
+        // console.log("Before toggling: web3Network:", web3Network, " selectedNetwork:", selectedNetwork);
 
         // Toggle the selected network (update selectedNetwork)
         const newNetwork = selectedNetwork === "solana" ? "ethereum" : "solana";
         setSelectedNetwork(newNetwork); // Update local state (selectedNetwork)
         setWeb3Network(newNetwork); // Immediately sync the Zustand store state (web3Network)
 
-        console.log("After toggling: web3Network:", newNetwork, " selectedNetwork:", newNetwork);
+        // console.log("After toggling: web3Network:", newNetwork, " selectedNetwork:", newNetwork);
         setShowPopup(false);  // Close the popup after selection
     };
 
