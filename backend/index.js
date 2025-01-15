@@ -11,8 +11,11 @@ const CryptoPrice = require('./models/coin');
 const app = express();
 app.use(express.json())
 const PORT = 3000;
-app.use(cors()); // Enable CORS for all routes
-const mongodburi = process.env.mongoose_uri
+const corsOptions = {
+    origin: 'https://rhino-wallet.vercel.app',  // Allow only this website
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Optional: Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'] // Optional: Specify allowed headers
+  };const mongodburi = process.env.mongoose_uri
 
 // MongoDB connection (replace with your MongoDB connection string)
 mongoose.connect(mongodburi).then(() => {
